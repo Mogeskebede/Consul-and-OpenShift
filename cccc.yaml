@@ -35,28 +35,28 @@ objects: # Root level key
             protocol: TCP
           volumeMounts: # Corrected indentation
           - mountPath: /etc/certs # Path inside the container
-            name: capi-certificate-volume
+            name: mo-certificate-volume
             readOnly: true
           env: # Corrected indentation
           - name: APP_SCRIPT
             value: start.sh
-          - name: CAPI_CLIENT_SECRET
+          - name: MO_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: capi-client-poc-secret # Corrected indentation
-                key: CAPI_CLIENT_SECRET
+                name: mo-client-poc-secret # Corrected indentation
+                key: MO_CLIENT_SECRET
           - name: vra_password
             valueFrom:
               secretKeyRef:
-                name: capi-vra-poc-password # Corrected indentation
+                name: mo-vra-poc-password # Corrected indentation
                 key: vra_password
           envFrom: # Corrected indentation
           - configMapRef:
               name: logs-cm
           - configMapRef:
-              name: capi-vra-poc.properties
+              name: mo-vra-poc.properties
           - configMapRef:
-              name: capi-common-cm.properties
+              name: mo-common-cm.properties
           # - configMapRef:
           #     name: miscellaneous-cm
           resources: {} # Corrected indentation
@@ -66,10 +66,10 @@ objects: # Root level key
           securityContext: {}
           terminationGracePeriodSeconds: 30
         volumes: # Corrected indentation
-        - name: capi-certificate-volume
+        - name: mo-certificate-volume
           secret:
             defaultMode: 420
-            secretName: capi-certificate-tls
+            secretName: mo-certificate-tls
         pushSecrets: # Corrected indentation
         - name: registry-nonprod
     test: false # Corrected indentation
