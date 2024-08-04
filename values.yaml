@@ -1,0 +1,31 @@
+global:
+  name: consul
+  datacenter: OpenShift-with-consul
+  image: registry.connect.redhat.com/hashicorp/consul:1.18.2-ubi
+  imageK8S: registry.connect.redhat.com/hashicorp/consul-k8s-control-plane:1.4.2-ubi
+  imageConsulDataplane: registry.connect.redhat.com/hashicorp/consul-dataplane:1.4.2-ubi
+  imagePullSecrets:
+  - name: 18162084-Service5530-pull-secret
+  openshift:
+    enabled: true
+
+server:
+  replicas: 3
+  bootstrapExpect: 3
+  disruptionBudget:
+    enabled: true
+    maxUnavailable: 0
+
+ui:
+  enabled: true
+
+connectInject:
+  enabled: true
+  default: true
+  cni:
+    enabled: true
+    logLevel: info
+    multus: true
+    cniBinDir: /var/lib/cni/bin
+    cniNetDir: /etc/kubernetes/cni/net.d
+

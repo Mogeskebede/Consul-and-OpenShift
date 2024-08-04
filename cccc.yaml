@@ -1,0 +1,98 @@
+apiVersion: v1 # Root level key
+kind: Template # Root level key
+objects: # Root level key
+- apiVersion: apps.openshift.io/v1 # Corrected apiVersion
+  kind: DeploymentConfig # Corrected indentation
+  metadata: # Corrected indentation
+    labels: # Corrected indentation
+      app: ${APP}
+    name: ${APP}
+  spec: # Corrected indentation
+    replicas: 1
+    selector:
+      app: ${APP}
+    strategy: # Corrected indentation
+      resources: {}
+      rollingParams: # Corrected indentation
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template: # Corrected indentation
+      metadata: # Corrected indentation
+        labels: # Corrected indentation
+          app: ${APP}
+          deploymentconfig: ${APP}
+      spec: # Corrected indentation
+        containers: # Corrected indentation
+        - image: ${REG}/${AIT}/${IMG}:${TAG}
+          imagePullPolicy: Always
+          name: ${APP}
+          ports: # Corrected indentation
+          - containerPort: 15069
+            protocol: TCP
+          volumeMounts: # Corrected indentation
+          - mountPath: /etc/certs # Path inside the container
+            name: capi-certificate-volume
+            readOnly: true
+          env: # Corrected indentation
+          - name: APP_SCRIPT
+            value: start.sh
+          - name: CAPI_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: capi-client-poc-secret # Corrected indentation
+                key: CAPI_CLIENT_SECRET
+          - name: vra_password
+            valueFrom:
+              secretKeyRef:
+                name: capi-vra-poc-password # Corrected indentation
+                key: vra_password
+          envFrom: # Corrected indentation
+          - configMapRef:
+              name: logs-cm
+          - configMapRef:
+              name: capi-vra-poc.properties
+          - configMapRef:
+              name: capi-common-cm.properties
+          # - configMapRef:
+          #     name: miscellaneous-cm
+          resources: {} # Corrected indentation
+          terminationMessagePath: /dev/termination-log
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+        volumes: # Corrected indentation
+        - name: capi-certificate-volume
+          secret:
+            defaultMode: 420
+            secretName: capi-certificate-tls
+        pushSecrets: # Corrected indentation
+        - name: registry-nonprod
+    test: false # Corrected indentation
+    triggers: # Corrected indentation
+    - type: ConfigChange
+parameters: # Root level key
+- description: App Name
+  displayName: App Name
+  name: APP
+  required: true
+- description: Registry
+  displayName: Registry
+  name: REG
+  required: true
+- description: Release Tag
+  displayName: Tag
+  name: TAG
+  required: true
+- description: Image Name
+  displayName: IMG
+  name: IMG
+  required: true
+- description: AIT Number
+  displayName: AIT
+  name: AIT
+  required: true
